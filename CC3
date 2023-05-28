@@ -1,0 +1,35 @@
+public class ThirdPracticalOne {
+    public void CreateAccount(String Name, String Phone){
+        Account acc = new Account();
+        acc.Name = Name;
+        acc.Phone = Phone;
+        insert acc;
+        System.debug('Account has been inserted: '+ acc.name+ acc.Phone);
+    }
+    
+    public void ShowList(){
+        for(Account acc:[select Name, Phone from Account]){
+            System.debug('Name: '+acc.Name);
+            System.debug('Phone Number : '+acc.Phone);
+        }
+    }
+    
+    public void UpdateOlderAccount(String NewName, String Phone){
+        List<Account> oldAccounts = new List<Account>();
+        for(Account acc: [select Name,Phone from Account where Phone = :Phone]){
+            acc.Name = NewName;
+            oldAccounts.add(acc);
+            System.debug('Account has been updated '+acc.name+ acc.Phone);
+        }
+        update oldAccounts;
+    }
+    
+    public void DeleteAccount(String Name){
+        List<Account> oldAccounts = new list<Account>();
+        for(Account acc : [select Name, Phone from Account where Name= :Name]){
+            delete acc;
+            System.debug('Account with Name : '+ acc.Name+' is deleted.');
+        }
+        update oldAccounts;
+    }
+}
