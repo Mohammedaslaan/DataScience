@@ -1,0 +1,94 @@
+public class ForthPracticalOne {
+    public String newAccountName { get; set; }
+    public String newAccountPhone { get; set; }
+    public String updateAccountName { get; set; }
+    public String updateAccountPhone { get; set; }
+    public String deleteAccountName { get; set; }
+    public List<Account> accountList { get; set; }
+    
+    public void CreateAccount(){
+        Account acc = new Account();
+        acc.Name = newAccountName;
+        acc.Phone = newAccountPhone;
+        insert acc;
+        newAccountName = '';
+        newAccountPhone = '';
+        System.debug('Account has been inserted: '+ acc.Name+ acc.Phone);
+    }
+    
+    public void ShowList(){
+        accountList = [SELECT Name, Phone FROM Account];
+    }
+    
+    public void UpdateOlderAccount(){
+        List<Account> oldAccounts = new List<Account>();
+        for(Account acc: [SELECT Name, Phone FROM Account WHERE Phone = :updateAccountPhone]){
+            acc.Name = updateAccountName;
+            oldAccounts.add(acc);
+            System.debug('Account has been updated '+acc.Name+ acc.Phone);
+        }
+        update oldAccounts;
+        updateAccountName = '';
+        updateAccountPhone = '';
+    }
+    
+    public void DeleteAccount(){
+        List<Account> oldAccounts = new list<Account>();
+        for(Account acc : [SELECT Name, Phone FROM Account WHERE Name= :deleteAccountName]){
+            delete acc;
+            System.debug('Account with Name : '+ acc.Name+' is deleted.');
+        }
+        update oldAccounts;
+        deleteAccountName = '';
+    }
+}
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+<apex:page controller="ForthThirdPracticalOne">
+    <apex:form>
+        <apex:pageBlock>
+            <apex:pageBlockSection>
+                <apex:inputText value="{!newAccountName}" label="Account Name"/>
+                <apex:inputText value="{!newAccountPhone}" label="Phone"/>
+                <apex:commandButton value="Create Account" action="{!CreateAccount}" rerender="accountTable"/>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        
+        <apex:pageBlock>
+            <apex:pageBlockButtons>
+                <apex:commandButton value="Show Accounts" action="{!ShowList}" rerender="accountTable"/>
+            </apex:pageBlockButtons>
+            
+            <apex:pageBlockTable value="{!accountList}" var="acc" id="accountTable">
+                <apex:column headerValue="Name">
+                    {!acc.Name}
+                </apex:column>
+                <apex:column headerValue="Phone">
+                    {!acc.Phone}
+                </apex:column>
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+        
+        <apex:pageBlock>
+            <apex:pageBlockSection>
+                <apex:inputText value="{!updateAccountName}" label="Account New Name"/>
+                <apex:inputText value="{!updateAccountPhone}" label="Update By Phone"/>
+                <apex:commandButton value="Update Account" action="{!UpdateOlderAccount}" rerender="accountTable"/>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        
+        <apex:pageBlock>
+            <apex:pageBlockSection>
+                <apex:inputText value="{!deleteAccountName}" label="Account Name"/>
+                <apex:commandButton value="Delete Account" action="{!DeleteAccount}" rerender="accountTable"/>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>
+
